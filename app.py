@@ -13,7 +13,7 @@ users_file = "users.csv"
 if os.path.exists(users_file):
     users_df = pd.read_csv(users_file, dtype=str).fillna("")
 else:
-    users_df = pd.DataFrame(columns=["username","password","referral_id","signup_date","trial_end","free_month_unlocked"])
+    users_df = pd.DataFrame(columns=["username","password","referral_id","signup_date","trial_end","free_month_unlocked","is_admin"])
 
 st.title("🔐 SmartJobs - Login / Signup")
 
@@ -44,7 +44,8 @@ if signup_btn:
             "referral_id": referral_id,
             "signup_date": signup_date.strftime("%Y-%m-%d %H:%M:%S"),
             "trial_end": trial_end.strftime("%Y-%m-%d %H:%M:%S"),
-            "free_month_unlocked": "False"
+            "free_month_unlocked": "False",
+            "is_admin": "False"
         }])
         users_df = pd.concat([users_df, new_user], ignore_index=True)
         users_df.to_csv(users_file, index=False)
@@ -63,6 +64,7 @@ if login_btn:
 
     if not user.empty:
         st.session_state['logged_in_user'] = username_clean
+        st.session_state['is_admin'] = user['is_admin'].values[0] == "True"
         st.success(f"🎉 Welcome {username_clean}!")
         st.info(f"Trial ends on {user['trial_end'].values[0]}")
         st.write(f"Referral link: http://localhost:8501?ref={user['referral_id'].values[0]}")

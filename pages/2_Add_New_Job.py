@@ -2,7 +2,16 @@ import streamlit as st
 import pandas as pd
 import os
 
+st.set_page_config(page_title="SmartJobs - Add Job", layout="wide")
 st.title("➕ Add New Job")
+
+# --- Admin check ---
+if 'logged_in_user' not in st.session_state:
+    st.warning("⚠️ Please log in first.")
+    st.stop()
+
+if not st.session_state.get('is_admin', False):
+    st.stop()  # completely hide page for non-admins
 
 jobs_file = "jobs.csv"
 if os.path.exists(jobs_file):
